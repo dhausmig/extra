@@ -1,0 +1,269 @@
+-- extra mod
+-- by dhausmig
+-- consisting of many different things
+---------------------------------------------------------------
+
+extra = {}
+extra.version = "1.0"
+extra.sand_mod     = true
+extra.oil_mod      = true
+extra.marinara_mod = true
+extra.pasta_mod    = true
+extra.pizza_mod    = true
+extra.fries_mod    = true
+
+local path = minetest.get_modpath("extra")
+
+-- Load new settings if found
+local input = io.open(path.."/settings.conf", "r")
+if input then
+	dofile(path .. "/settings.conf")
+	input:close()
+	input = nil
+end
+
+dofile(path .. "/craftitems.lua")
+
+---------------------------------------------------------------
+-- this allows conversion of glass panes back to sand
+-- does not increase or decrease resources
+-- with the sand type given by example
+-- also allows sand type to be changed by
+-- sand -> glass -> panes -> different sand
+if extra.sand_mod then
+	dofile(path .. "/glass_sand.lua")
+end
+
+-- Detect which items are present so we can adjust which crafts get defined
+
+extra.alloy = (minetest.registered_items["technic:lv_alloy_furnace"] ~= nil)
+extra.extractor = (minetest.registered_items['technic:lv_extractor'] ~= nil)
+extra.grinder = (minetest.registered_items["technic:grinder"] ~= nil)
+extra.meat = (minetest.registered_items["mobs:meat"] ~= nil)
+extra.pork = (minetest.registered_items["mobs:pork_raw"] ~= nil)
+extra.garlic = (minetest.registered_items["farming:garlic_clove"] ~= nil)
+extra.onion = (minetest.registered_items["farming:onion"] ~= nil)
+extra.wild = (minetest.registered_items["ethereal:wild_onion_plant"] ~= nil)
+extra.chili = (minetest.registered_items["farming:chili_pepper"] ~= nil)
+extra.pineapple = (minetest.registered_items["farming:pineapple_ring"] ~= nil)
+extra.corn = (minetest.registered_items["farming:corn"] ~= nil)
+extra.techcorn = (minetest.registered_items["technic:cornmeal"] ~= nil)
+
+-- PASTA
+if extra.pasta_mod then
+   minetest.register_craft({
+      output = 'extra:pasta 5',
+      type = "shapeless",
+      recipe = {'farming:flour', 'bucket:bucket_water'},
+      replacements = {{ "bucket:bucket_water", "bucket:bucket_empty"}}
+   })
+end
+
+-- PEPPERONI
+if extra.pork and extra.chili then
+      minetest.register_craft({
+         type = "shapeless",
+         output = 'extra:pepperoni',
+         recipe = {'mobs:pork_raw', 'farming:chili_pepper'},
+      })
+end
+
+-- MARANARA
+if extra.maranara_mod and extra.garlic then
+   minetest.register_craft({
+      type = "shapeless",
+         output = "extra:marinara",
+         recipe = {"farming:tomato", "farming:tomato", "farming:onion",
+                   "farming:garlic_clove"}
+   })
+   if extra.wild then
+      minetest.register_craft({
+         type = "shapeless",
+         output = "extra:marinara",
+         recipe = {"farming:tomato", "farming:tomato",
+                   "ethereal:wild_onion_plant", "farming:garlic_clove"}
+      })
+   end
+end
+
+-- COTTONSEED OIL
+if extra.oil_mod then
+   minetest.register_craft({
+      output = 'extra:cottonseed_oil',
+      recipe = {
+         {'farming:seed_cotton', 'farming:seed_cotton', 'farming:seed_cotton'},
+         {'farming:seed_cotton', 'farming:seed_cotton', 'farming:seed_cotton'},
+         {'farming:seed_cotton', 'farming:seed_cotton', 'farming:seed_cotton'},
+      }
+   })
+   if extra.extractor then
+		technic.register_extractor_recipe({input = {"farming:seed_cotton 3"}, output = "extra:cottonseed_oil"})
+   end
+end
+
+-- GARLIC BREAD
+if extra.garlic then
+
+   minetest.register_craft({
+      type = "shapeless",
+      output = "extra:garlic_dough",
+      recipe = {"farming:flour", "farming:garlic_clove"}
+   })
+
+   minetest.register_craft({
+      type = "cooking",
+      output = "extra:garlic_bread",
+      recipe = "extra:garlic_dough"
+   })
+end
+
+minetest.register_craft({
+   type = "shapeless",
+   output = 'extra:flour_tortilla 10',
+   recipe = {'farming:flour', 'extra:cottonseed_oil'},
+})
+
+if extra.alloy and extra.fries then
+   local alloy_recipes = {
+      {"farming:potato", "extra:cottonseed_oil", "extra:french_fries"},
+      {"farming:onion",  "extra:cottonseed_oil", "extra:onion_rings"}
+   }
+   if extra.wild then
+      table.insert(alloy_recipes,
+         {"ethereal:wild_onion_plant", "extra:cottonseed_oil",
+          "extra:onion_rings"})
+   end
+   for _, data in pairs(alloy_recipes) do
+      technic.register_alloy_recipe({input = {data[1], data[2]}, output = data[3], time = data[4]})
+   end
+end
+
+   if extra.meat then
+
+-- TACOS
+      minetest.register_craft({
+         type = "shapeless",
+         output = 'extra:taco 5',
+         recipe = {'mobs:meat', 'mobs:cheese', 'extra:flour_tortilla',
+            'extra:flour_tortilla', 'extra:flour_tortilla',
+            'extra:flour_tortilla', 'extra:flour_tortilla'},
+      })
+   end
+
+if extra.garlic then
+
+   minetest.register_craft({
+      type = "shapeless",
+      output = 'extra:spaghetti 5',
+      recipe = {"extra:marinara", "extra:pasta", "extra:pasta", "extra:pasta",
+                "extra:pasta", "extra:pasta"},
+   })
+
+   minetest.register_craft({
+      type = "shapeless",
+      output = 'extra:lasagna 5',
+      recipe = {"extra:marinara", "extra:pasta", "extra:pasta", "extra:pasta",
+                "extra:pasta", "extra:pasta", "mobs:cheese"},
+   })
+
+   minetest.register_craft({
+      type = "shapeless",
+      output = 'extra:cheese_pizza 8',
+      recipe = {"farming:flour", "extra:marinara", "mobs:cheese"},
+   })
+
+   if extra.chili then
+
+-- jar of salsa
+
+      if extra.wild then
+         minetest.register_craft({
+            type = "shapeless",
+            output = "extra:salsa",
+            recipe = {"farming:chili_pepper", "ethereal:wild_onion_plant",
+                      "farming:tomato"},
+         })
+      end
+      if extra.onion then
+         minetest.register_craft({
+            type = "shapeless",
+            output = "extra:salsa",
+            recipe = {"farming:chili_pepper", "farming:onion", "farming:tomato"},
+         })
+      end
+      if minetest.registered_items["extra:taco"] ~= nil then
+
+         minetest.register_craft({
+            type = "shapeless",
+            output = "extra:super_taco 5",
+            recipe = {"extra:salsa", "extra:taco", "extra:taco",
+                     "extra:taco", "extra:taco","extra:taco"},
+         })
+
+         minetest.register_craft({
+            type = "shapeless",
+            output = "extra:pepperoni_pizza 8",
+            recipe = {"farming:flour", "extra:marinara", "mobs:cheese",
+                      "extra:pepperoni"},
+         })
+
+         minetest.register_craft({
+            type = "shapeless",
+            output = "extra:deluxe_pizza 8",
+            recipe = {"farming:flour", "extra:marinara", "mobs:cheese",
+                      "extra:pepperoni", "farming:onion", "farming:tomato",
+                      "flowers:mushroom_brown"}
+         })
+
+         if minetest.registered_items["ethereal:wild_onion_plant"] ~= nil then
+            minetest.register_craft({
+               type = "shapeless",
+               output = "extra:deluxe_pizza 8",
+               recipe = {"farming:flour", "extra:marinara", "mobs:cheese",
+                         "extra:pepperoni", "ethereal:wild_onion_plant",
+                         "farming:tomato", "flowers:mushroom_brown"}
+            })
+         end
+         if extra.pineapple then
+
+         minetest.register_craft({
+            type = "shapeless",
+            output = "extra:pineapple_pizza 8",
+            recipe = {"farming:flour", "extra:marinara", "mobs:cheese",
+                      "mobs:pork_cooked", "farming:pineapple_ring"},
+         })
+         end         
+      end
+   end
+end
+
+if not extra.techcorn then
+   if extra.corn then
+
+      minetest.register_craft({
+         type = "cooking",
+         cooktime = 10,
+         output = "extra:cornbread",
+         recipe = "extra:cornmeal"
+      })
+
+----- CHECK FOR TECHNIC GRINDER -------------------------------
+
+      if extra.grinder then
+         local recipes = {}
+         table.insert(recipes, {"farming:corn",   "extra:cornmeal 2"})
+
+         for _, data in pairs(recipes) do
+            technic.register_grinder_recipe({input = {data[1]}, output = data[2]})
+         end
+
+      else
+         minetest.register_craft({
+            type = "shapeless",
+            output = 'extra:cornmeal 4',
+            recipe = {'farming:corn', 'farming:corn','farming:corn', 'farming:corn'},
+      })
+      end
+
+   end
+end
