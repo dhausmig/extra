@@ -1,5 +1,5 @@
-Minetest Game mod: extra
-==========================
+Minetest Game mod: extra Ver. 1.1
+=================================
 
 Adds a way to convert glass panes back to sand.
 In doing so, conversion of sand types can be accomplished.
@@ -16,6 +16,7 @@ Adds numerous food item recipes:
    Lasagna
    Taco
    Super Taco
+   Quesadilla
    French Fries
    Onion Rings
    Pepperoni

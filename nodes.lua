@@ -1,6 +1,18 @@
+-- extra mod
+-- by dhausmig
+-- consisting of many different things
+---------------------------------------------------------------
+minetest.register_node("extra:cobble_condensed", {
+	description = S("Condensed Cobblestone"),
+	tiles = {"moreblocks_cobble_compressed.png^[colorize:black:255]"},
+	is_ground_content = false,
+	groups = {cracky = 1, stone = 2},
+   stack_max = 999,
+	sounds = default.node_sound_stone_defaults(),
+})
 
 minetest.register_node("extra:tequila", {
-	description = "Bottle of Tequila",
+	description = S("Bottle of Tequila"),
 	drawtype = "plantlike",
 	tiles = {"extra_tequila.png"},
 	inventory_image = "extra_tequila.png",
@@ -18,7 +30,7 @@ minetest.register_node("extra:tequila", {
 })
 
 minetest.register_node("extra:rum", {
-	description = "Bottle of Rum",
+	description = S("Bottle of Rum"),
 	drawtype = "plantlike",
 	tiles = {"extra_rum.png"},
 	inventory_image = "extra_rum.png",
