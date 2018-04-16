@@ -36,11 +36,13 @@ end
 -- Detect which items are present so we can adjust which crafts get defined
 
 extra.alloy = (minetest.registered_items["technic:lv_alloy_furnace"] ~= nil)
+extra.cantrifuge = (minetest.registered_items["technic:mv_centrifuge"] ~= nil)
 extra.extractor = (minetest.registered_items['technic:lv_extractor'] ~= nil)
 extra.grinder = (minetest.registered_items["technic:grinder"] ~= nil)
 extra.technic = (minetest.get_modpath("technic") ~= nil)
 extra.tech_corn = (minetest.registered_items["technic:cornmeal"] ~= nil)
 extra.comp = (minetest.registered_items["moreblocks:cobble_compressed"] ~= nil)
+extra.cond = (minetest.registered_items["moreblocks:cobble_condensed"] == nil)
 
 dofile(path .. "/nodes.lua")
 
@@ -83,7 +85,8 @@ for item, val in pairs(minetest.registered_items) do
    local colon = item:find(":")
    if colon then
       local name = item:sub(colon + 1)
-      if name == "cheese" then
+      if name == "cheese" or
+         name == "goatcheese" then
          table.insert(cheese_list, {item})
       end
       if name == "corn" then
@@ -400,61 +403,60 @@ minetest.register_craft({
  })
 
 -- SPAGHETTI AND LASAGNA
-minetest.register_craft({
-   type = "shapeless",
-   output = 'extra:spaghetti 5',
-   recipe = {"extra:marinara", "extra:pasta", "extra:pasta", "extra:pasta",
-             "extra:pasta", "extra:pasta"},
-})
+if extra.marinara_mod then
+   if extra.pasta_mod then
+      minetest.register_craft({
+         type = "shapeless",
+         output = 'extra:spaghetti 5',
+         recipe = {"extra:marinara", "extra:pasta", "extra:pasta",
+                   "extra:pasta", "extra:pasta", "extra:pasta"},
+      })
+   end
 
-for _, cheese in pairs(cheese_list) do
-   minetest.register_craft({
-      type = "shapeless",
-      output = 'extra:lasagna 5',
-      recipe = {"extra:marinara", "extra:pasta", "extra:pasta", "extra:pasta",
-                "extra:pasta", "extra:pasta", cheese[1]},
-   })
-
+   for _, cheese in pairs(cheese_list) do
+      if extra.pasta_mod then
+         minetest.register_craft({
+            type = "shapeless",
+            output = 'extra:lasagna 5',
+            recipe = {"extra:marinara", "extra:pasta", "extra:pasta",
+                      "extra:pasta", "extra:pasta", "extra:pasta", cheese[1]},
+         })
+      end
 -- PIZZA
-   if extra.pizza_mod then
-      minetest.register_craft({
-         type = "shapeless",
-         output = 'extra:cheese_pizza 8',
-         recipe = {"farming:flour", "extra:marinara", cheese[1]},
-      })
+      if extra.pizza_mod then
+         minetest.register_craft({
+            type = "shapeless",
+            output = 'extra:cheese_pizza 8',
+            recipe = {"farming:flour", "extra:marinara", cheese[1]},
+         })
 
-      minetest.register_craft({
-         type = "shapeless",
-         output = "extra:pepperoni_pizza 8",
-         recipe = {"farming:flour", "extra:marinara", cheese[1],
-                   "extra:pepperoni"},
-      })
+         minetest.register_craft({
+            type = "shapeless",
+            output = "extra:pepperoni_pizza 8",
+            recipe = {"farming:flour", "extra:marinara", cheese[1],
+                      "extra:pepperoni"},
+         })
 
-      minetest.register_craft({
-         type = "shapeless",
-         output = "extra:deluxe_pizza 8",
-         recipe = {"farming:flour", "extra:marinara", cheese[1],
-                   "extra:pepperoni", "extra:onion_slice", "extra:tomato_slice",
-                   "flowers:mushroom_brown"}
-      })
+         minetest.register_craft({
+            type = "shapeless",
+            output = "extra:deluxe_pizza 8",
+            recipe = {"farming:flour", "extra:marinara", cheese[1],
+                      "extra:pepperoni", "extra:onion_slice",
+                      "extra:tomato_slice", "flowers:mushroom_brown"}
+         })
 
-      minetest.register_craft({
-         type = "shapeless",
-         output = "extra:pineapple_pizza 8",
-         recipe = {"farming:flour", "extra:marinara", cheese[1],
-                   "extra:ground_meat", "farming:pineapple_ring"},
-      })
+         minetest.register_craft({
+            type = "shapeless",
+            output = "extra:pineapple_pizza 8",
+            recipe = {"farming:flour", "extra:marinara", cheese[1],
+                      "extra:ground_meat", "farming:pineapple_ring"},
+         })
+      end
    end
 end
 
 -- CORNMEAL AND CORNBREAD
 if not extra.tech_corn then
-   minetest.register_craft({
-      type = "cooking",
-      cooktime = 10,
-      output = "extra:cornbread",
-      recipe = "extra:cornmeal"
-   })
    for _, corn in pairs(corn_list) do
       minetest.register_craft({
          type = "shapeless",
@@ -466,6 +468,12 @@ if not extra.tech_corn then
          table.insert(grinder_recipes, {corn[1],   "extra:cornmeal 2"})
       end
    end
+   minetest.register_craft({
+      type = "cooking",
+      cooktime = 10,
+      output = "extra:cornbread",
+      recipe = "extra:cornmeal"
+   })
 else
    minetest.register_alias("technic:cornmeal", "extra:cornmeal")
 end
@@ -594,7 +602,7 @@ if extra.ore_recovery then
    })
 end
 
-if extra.condensed and extra.comp then
+if extra.condensed and extra.comp and extra.cond then
    minetest.register_craft({
    	output = "extra:cobble_condensed",
    	recipe = {
@@ -616,20 +624,19 @@ if extra.condensed and extra.comp then
 end
 
 if extra.liquor then
+   minetest.register_craft( {
+      type = "shapeless",
+   	output = "extra:tequila",
+	   recipe = {"vessels:glass_bottle", "default:cactus", "default:cactus",
+         "default:cactus", "default:cactus", "default:cactus",
+         "default:cactus", "default:cactus", "default:cactus"}
+   })
 
-minetest.register_craft( {
-   type = "shapeless",
-	output = "extra:tequila",
-	recipe = {"vessels:glass_bottle", "default:cactus", "default:cactus",
-      "default:cactus", "default:cactus", "default:cactus",
-      "default:cactus", "default:cactus", "default:cactus"}
-})
-
-minetest.register_craft( {
-   type = "shapeless",
-	output = "extra:rum",
-	recipe = {"vessels:glass_bottle", "default:papyrus", "default:papyrus",
-      "default:papyrus", "default:papyrus", "default:papyrus",
-      "default:papyrus", "default:papyrus", "default:papyrus"}
-})
+   minetest.register_craft( {
+      type = "shapeless",
+   	output = "extra:rum",
+	   recipe = {"vessels:glass_bottle", "default:papyrus", "default:papyrus",
+         "default:papyrus", "default:papyrus", "default:papyrus",
+         "default:papyrus", "default:papyrus", "default:papyrus"}
+   })
 end

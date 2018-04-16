@@ -3,12 +3,44 @@
 -- consisting of many different things
 ---------------------------------------------------------------
 
+if extra.oil_mod then
 -- COTTONSEED OIL
-minetest.register_craftitem("extra:cottonseed_oil", {
-   description = S("Cottonseed Oil"),
-   inventory_image = "extra_cottonseed_oil.png",
-   groups = {vessel = 1}
-})
+   minetest.register_craftitem("extra:cottonseed_oil", {
+      description = S("Cottonseed Oil"),
+      inventory_image = "extra_cottonseed_oil.png",
+      groups = {vessel = 1}
+   })
+
+   minetest.register_craftitem("extra:potato_crisps", {
+      description = S("Potato Crisps"),
+      inventory_image = "extra_potato_crisps.png",
+      on_use = minetest.item_eat(2),
+   })
+
+   minetest.register_craftitem("extra:french_fries", {
+      description = S("French Fries"),
+      inventory_image = "extra_french_fries.png",
+      on_use = minetest.item_eat(2),
+   })
+
+   minetest.register_craftitem("extra:onion_rings", {
+      description = S("Onion Rings"),
+      inventory_image = "extra_onion_rings.png",
+      on_use = minetest.item_eat(3),
+   })
+
+   minetest.register_craftitem("extra:blooming_onion", {
+      description = S("Blooming Onion"),
+      inventory_image = "extra_blooming_onion.png",
+      on_use = minetest.item_eat(10),
+   })
+
+   minetest.register_craftitem("extra:fish_sticks", {
+      description = S("Fish Sticks"),
+      inventory_image = "extra_fish_sticks.png",
+      on_use = minetest.item_eat(3),
+   })
+end
 
 minetest.register_craftitem("extra:ground_meat", {
    description = S("Ground Meat"),
@@ -44,12 +76,6 @@ minetest.register_craftitem("extra:potato_slice", {
    description = S("Potato Slice"),
    inventory_image = "extra_potato_slice.png",
    on_use = minetest.item_eat(1),
-})
-
-minetest.register_craftitem("extra:potato_crisps", {
-   description = S("Potato Crisps"),
-   inventory_image = "extra_potato_crisps.png",
-   on_use = minetest.item_eat(2),
 })
 
 minetest.register_craftitem("extra:hamburger", {
@@ -91,30 +117,6 @@ minetest.register_craftitem("extra:flour_tortilla", {
    description = S("Flour Tortilla"),
    inventory_image = "extra_flour_tortilla.png",
    on_use = minetest.item_eat(1),
-})
-
-minetest.register_craftitem("extra:french_fries", {
-   description = S("French Fries"),
-   inventory_image = "extra_french_fries.png",
-   on_use = minetest.item_eat(2),
-})
-
-minetest.register_craftitem("extra:onion_rings", {
-   description = S("Onion Rings"),
-   inventory_image = "extra_onion_rings.png",
-   on_use = minetest.item_eat(3),
-})
-
-minetest.register_craftitem("extra:blooming_onion", {
-   description = S("Blooming Onion"),
-   inventory_image = "extra_blooming_onion.png",
-   on_use = minetest.item_eat(10),
-})
-
-minetest.register_craftitem("extra:fish_sticks", {
-   description = S("Fish Sticks"),
-   inventory_image = "extra_fish_sticks.png",
-   on_use = minetest.item_eat(3),
 })
 
 -- TACOS
